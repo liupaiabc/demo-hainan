@@ -25,3 +25,27 @@ export interface TemplateRecord {
   updatedAt: string;
   updatedBy: string;
 }
+
+export interface LedgerFields {
+  businessName: string;
+  requirementName: string;
+  description: string;
+  contact: string;
+  completionDate: string;
+  riskLevel: string;
+  riskCount: string;
+  riskResolved: string;
+}
+
+export type LedgerDocumentKey = 'evaluationForm' | 'evaluationReport' | 'riskTrackingSheet';
+
+export interface LedgerRecord extends LedgerFields {
+  id: number;
+  evaluationFormFileName: string | null;
+  evaluationReportFileName: string | null;
+  riskTrackingSheetFileName: string | null;
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string;
+  updatedBy: string;
+}

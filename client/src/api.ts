@@ -1,4 +1,7 @@
-import type { ApiErrorResponse, GreetingRequest, GreetingResponse, StatusResponse, TemplateRecord } from '../../shared/api.js';
+import type {
+  ApiErrorResponse, GreetingRequest, GreetingResponse, LedgerDocumentKey, LedgerFields,
+  LedgerRecord, StatusResponse, TemplateRecord,
+} from '../../shared/api.js';
 
 async function errorMessage(response: Response): Promise<string> {
   try {
@@ -30,6 +33,15 @@ function templateForm(name: string, version: string, file?: File) {
   return form;
 }
 
+function ledgerForm(fields: LedgerFields, files: Partial<Record<LedgerDocumentKey, File | null>>) {
+  const form = new FormData();
+  for (const [key, value] of Object.entries(fields)) form.append(key, value);
+  for (const [key, file] of Object.entries(files)) {
+    if (file) form.append(key, file);
+  }
+  return form;
+}
+
 export const api = {
   status: () => request<StatusResponse>('/api/status'),
   greet: (payload: GreetingRequest) =>
@@ -45,6 +57,23 @@ export const api = {
   deleteTemplate: (id: number) => request<void>(`/api/templates/${id}`, { method: 'DELETE' }),
   downloadTemplate: async (id: number) => {
     const response = await fetch(`/api/templates/${id}/download`);
+    if (!response.ok) throw new Error(await errorMessage(response));
+    return response.blob();
+  },
+  listLedger: () => request<LedgerRecord[]>('/api/ledger'),
+  getLedger: (id: number) => request<LedgerRecord>(`/api/ledger/${id}`),
+  createLedger: (fields: LedgerFields, files: Partial<Record<LedgerDocumentKey, File | null>>) =>
+    request<LedgerRecord>('/api/ledger', { method: 'POST', body: ledgerForm(fields, files) }),
+  updateLedger: (id: number, fields: LedgerFields, files: Partial<Record<LedgerDocumentKey, File | null>>) =>
+    request<LedgerRecord>(`/api/ledger/${id}`, { method: 'PUT', body: ledgerForm(fields, files) }),
+  deleteLedger: (id: number) => request<void>(`/api/ledger/${id}`, { method: 'DELETE' }),
+  replaceLedgerFile: (id: number, key: LedgerDocumentKey, file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    return request<LedgerRecord>(`/api/ledger/${id}/files/${key}`, { method: 'PUT', body: form });
+  },
+  downloadLedgerFile: async (id: number, key: LedgerDocumentKey) => {
+    const response = await fetch(`/api/ledger/${id}/files/${key}/download`);
     if (!response.ok) throw new Error(await errorMessage(response));
     return response.blob();
   },

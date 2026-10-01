@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-type IconName = 'dashboard' | 'template' | 'report' | 'ledger' | 'upload' | 'search' | 'edit' | 'download' | 'delete' | 'file';
+type IconName = 'dashboard' | 'template' | 'report' | 'ledger' | 'upload' | 'search' | 'edit' | 'download' | 'delete' | 'file' | 'replace' | 'plus' | 'export';
 
 export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   const paths: Record<IconName, ReactNode> = {
@@ -14,6 +14,9 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
     download: <><path d="M12 3v12m-4-4 4 4 4-4" /><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></>,
     delete: <><path d="M4 7h16M9 7V4h6v3m3 0-1 14H7L6 7m4 4v6m4-6v6" /></>,
     file: <><path d="M6 2h8l5 5v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z" /><path d="M14 2v5h5M8 12h8M8 16h8" /></>,
+    replace: <><path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" /><path d="M15 3v4h4M8 14h8m-3-3 3 3-3 3" /></>,
+    plus: <><path d="M12 4v16M4 12h16" /></>,
+    export: <><path d="M12 3v12m-4-4 4 4 4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></>,
   };
 
   return (

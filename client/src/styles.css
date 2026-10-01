@@ -54,5 +54,42 @@ button, input { font: inherit; }
 .template-modal .ant-modal-footer { margin: 22px -40px -24px; padding: 22px 40px 24px; border-top: 1px solid #edf0f4; }
 .template-modal .ant-modal-footer .ant-btn { min-width: 112px; height: 42px; font-size: 16px; }
 .empty-page p { color: #8a94a3; font-size: 16px; }
-@media (max-width: 900px) { .app-content { padding: 18px 16px 28px; } .page-card { padding: 22px 18px; } .page-toolbar { align-items: stretch; flex-direction: column; } .toolbar-actions { justify-content: space-between; } }
+.ledger-card { padding: 0 0 36px; }
+.ledger-title { margin: 0; padding: 24px 26px 20px; border-bottom: 1px solid #e9edf3; color: #20242d; font-size: 25px; font-weight: 650; }
+.ledger-body { padding: 26px 20px; }
+.ledger-filters { display: flex; align-items: end; flex-wrap: wrap; gap: 18px 24px; margin-bottom: 25px; }
+.ledger-filter-field { display: flex; align-items: center; gap: 13px; min-width: 230px; color: #303642; font-size: 15px; white-space: nowrap; }
+.ledger-filter-field .ant-select { flex: 1; min-width: 130px; }
+.ledger-filter-field .ant-select-selector { min-height: 36px !important; border-radius: 5px !important; }
+.ledger-filter-actions { display: flex; gap: 12px; margin-left: auto; }
+.ledger-filter-actions .ant-btn { min-width: 80px; height: 36px; }
+.ledger-toolbar { display: flex; gap: 13px; margin: 0 0 18px; }
+.ledger-toolbar .ant-btn { height: 38px; }
+.ledger-table .ant-table-container { border: 1px solid #e2e8f0; border-radius: 5px; overflow: hidden; }
+.ledger-table .ant-table { font-size: 14px; }
+.ledger-table .ant-table-thead > tr > th { padding: 13px 12px; background: #f5f7fb; color: #27303b; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.ledger-table .ant-table-tbody > tr > td { padding: 11px 12px; color: #343c48; }
+.ledger-table .ant-table-tbody > tr:nth-child(even) > td { background: #f9fbfe; }
+.ledger-table .ant-table-thead > tr > th:not(:last-child), .ledger-table .ant-table-tbody > tr > td:not(:last-child) { border-right: 1px solid #edf0f4; }
+.ledger-file-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.ledger-file-name { max-width: 110px; overflow: hidden; color: #626d7d; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.ledger-icon-actions { display: flex; align-items: center; justify-content: center; gap: 11px; }
+.ledger-icon-actions button { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; padding: 0; border: 0; background: transparent; color: #237ac4; cursor: pointer; }
+.ledger-icon-actions button:hover { color: #075da9; }
+.ledger-icon-actions button:disabled { color: #b9c3ce; cursor: not-allowed; }
+.ledger-row-actions { gap: 15px; }
+.ledger-modal .ant-modal-content { padding: 25px 32px 23px; border-radius: 9px; }
+.ledger-modal .ant-modal-title { font-size: 19px; }
+.ledger-modal .ant-modal-body { max-height: min(70vh, 710px); overflow-y: auto; padding-top: 22px; }
+.ledger-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; }
+.ledger-form-grid .full-width { grid-column: 1 / -1; }
+.ledger-form .ant-form-item { margin-bottom: 17px; }
+.ledger-form .ant-form-item-label > label { color: #303642; font-size: 14px; }
+.ledger-form .ant-input, .ledger-form .ant-select-selector { border-radius: 5px; }
+.ledger-upload-field .ant-btn { color: #2478c4; }
+.ledger-modal .ant-modal-footer { margin-top: 15px; }
+.ledger-modal .ant-modal-footer .ant-btn { min-width: 84px; }
+@media (max-width: 900px) { .ledger-filters { align-items: stretch; } .ledger-filter-actions { margin-left: 0; } }
+@media (max-width: 600px) { .ledger-body { padding: 20px 12px; } .ledger-filter-field { width: 100%; } .ledger-filter-actions { width: 100%; } .ledger-filter-actions .ant-btn { flex: 1; } .ledger-toolbar { flex-wrap: wrap; } .ledger-form-grid { grid-template-columns: 1fr; } .ledger-modal .ant-modal-content { padding: 22px; } }
+@media (max-width: 900px) { .app-content { padding: 18px 16px 28px; } .page-card { padding: 22px 18px; } .page-card.ledger-card { padding: 0 0 22px; } .page-toolbar { align-items: stretch; flex-direction: column; } .toolbar-actions { justify-content: space-between; } }
 @media (max-width: 600px) { .app-header { font-size: 21px; padding-left: 54px; } .breadcrumb { font-size: 14px; } .toolbar-actions { align-items: stretch; flex-direction: column; gap: 10px; } .template-search.ant-input-affix-wrapper { width: 100%; } .upload-button.ant-btn { width: 100%; } .template-modal .ant-modal-content { padding: 22px; } .template-modal .ant-modal-footer { margin: 20px -22px -22px; padding: 18px 22px; } }

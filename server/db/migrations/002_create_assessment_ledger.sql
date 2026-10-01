@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS assessment_ledger (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  business_name VARCHAR(100) NOT NULL,
+  requirement_name VARCHAR(100) NOT NULL,
+  description VARCHAR(500) NOT NULL,
+  contact VARCHAR(50) NOT NULL,
+  completion_date VARCHAR(10) NOT NULL,
+  risk_level VARCHAR(20) NOT NULL,
+  risk_count VARCHAR(20) NOT NULL,
+  risk_resolved VARCHAR(20) NOT NULL,
+  evaluation_form_filename VARCHAR(255) NULL,
+  evaluation_form_blob MEDIUMBLOB NULL,
+  evaluation_report_filename VARCHAR(255) NULL,
+  evaluation_report_blob MEDIUMBLOB NULL,
+  risk_tracking_sheet_filename VARCHAR(255) NULL,
+  risk_tracking_sheet_blob MEDIUMBLOB NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by VARCHAR(100) NOT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_by VARCHAR(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -25,7 +25,7 @@ function formatDate(iso: string) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-export default function HomePage() {
+export default function TemplatePage() {
   const { message, modal } = AntdApp.useApp();
   const [templates, setTemplates] = useState<TemplateRecord[]>([]);
   const [loading, setLoading] = useState(true);

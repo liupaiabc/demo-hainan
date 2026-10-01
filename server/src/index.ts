@@ -5,6 +5,7 @@ import type { GreetingRequest, GreetingResponse, StatusResponse } from '../../sh
 import { config } from './config.js';
 import { pool } from './db/pool.js';
 import { templateRouter } from './templates/routes.js';
+import { ledgerRouter } from './ledger/routes.js';
 
 const app = new Koa();
 const router = new Router();
@@ -45,9 +46,12 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 app.use(templateRouter.routes());
 app.use(templateRouter.allowedMethods());
+app.use(ledgerRouter.routes());
+app.use(ledgerRouter.allowedMethods());
 app.on('error', (error) => console.error(error));
 
 await pool.query('SELECT 1 FROM template LIMIT 0');
+await pool.query('SELECT 1 FROM assessment_ledger LIMIT 0');
 const server = app.listen(config.port, () => {
   console.info(`Koa API listening on http://localhost:${config.port}`);
 });
