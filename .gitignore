@@ -6,3 +6,4 @@ dist/
 *.tsbuildinfo
 server/logs/
 .DS_Store
+server/template/command.txt
