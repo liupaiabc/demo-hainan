@@ -4,6 +4,7 @@ import TemplatePage from './pages/TemplatePage';
 import LedgerPage from './pages/LedgerPage';
 import ReportPage from './pages/ReportPage';
 import NotFoundPage from './pages/NotFoundPage';
+import DashboardPage from './pages/DashboardPage';
 import { Icon } from './components/Icon';
 
 const { Sider, Header, Content } = Layout;
@@ -37,23 +38,11 @@ function AppLayout() {
   );
 }
 
-function ComingSoonPage({ title }: { title: string }) {
-  return (
-    <div className="page-wrap">
-      <div className="breadcrumb">首页 <span>/</span> {title}</div>
-      <section className="page-card empty-page">
-        <h1>{title}</h1>
-        <p>页面即将开放</p>
-      </section>
-    </div>
-  );
-}
-
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<AppLayout />}>
-        <Route index element={<ComingSoonPage title="首页仪表盘" />} />
+        <Route index element={<DashboardPage />} />
         <Route path="templates" element={<TemplatePage />} />
         <Route path="reports" element={<ReportPage />} />
         <Route path="ledger" element={<LedgerPage />} />

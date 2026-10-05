@@ -49,3 +49,18 @@ export interface LedgerRecord extends LedgerFields {
   updatedAt: string;
   updatedBy: string;
 }
+
+export interface DashboardResponse {
+  totalAssessments: number;
+  templateCount: number;
+  businessBreakdown: { businessName: string; count: number }[];
+  riskStatus: { status: '是' | '否' | '无风险项'; count: number }[];
+  unresolvedCount: number;
+  unresolvedRisks: {
+    id: number;
+    requirementName: string;
+    businessName: string;
+    riskCount: string;
+    updatedAt: string;
+  }[];
+}

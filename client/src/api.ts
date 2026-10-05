@@ -1,5 +1,5 @@
 import type {
-  ApiErrorResponse, GreetingRequest, GreetingResponse, LedgerDocumentKey, LedgerFields,
+  ApiErrorResponse, DashboardResponse, GreetingRequest, GreetingResponse, LedgerDocumentKey, LedgerFields,
   LedgerRecord, StatusResponse, TemplateRecord,
 } from '../../shared/api.js';
 
@@ -43,6 +43,7 @@ function ledgerForm(fields: LedgerFields, files: Partial<Record<LedgerDocumentKe
 }
 
 export const api = {
+  dashboard: () => request<DashboardResponse>('/api/dashboard'),
   status: () => request<StatusResponse>('/api/status'),
   greet: (payload: GreetingRequest) =>
     request<GreetingResponse>('/api/greet', {

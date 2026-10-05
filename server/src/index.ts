@@ -7,6 +7,7 @@ import { pool } from './db/pool.js';
 import { templateRouter } from './templates/routes.js';
 import { ledgerRouter } from './ledger/routes.js';
 import { reportRouter } from './reports/routes.js';
+import { dashboardRouter } from './dashboard/routes.js';
 
 const app = new Koa();
 const router = new Router();
@@ -51,6 +52,8 @@ app.use(ledgerRouter.routes());
 app.use(ledgerRouter.allowedMethods());
 app.use(reportRouter.routes());
 app.use(reportRouter.allowedMethods());
+app.use(dashboardRouter.routes());
+app.use(dashboardRouter.allowedMethods());
 app.on('error', (error) => console.error(error));
 
 await pool.query('SELECT 1 FROM template LIMIT 0');
