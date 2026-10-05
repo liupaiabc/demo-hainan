@@ -89,6 +89,52 @@ button, input { font: inherit; }
 .ledger-upload-field .ant-btn { color: #2478c4; }
 .ledger-modal .ant-modal-footer { margin-top: 15px; }
 .ledger-modal .ant-modal-footer .ant-btn { min-width: 84px; }
+.report-card { padding: 24px 26px 30px; }
+.report-title { margin: 0 0 20px; color: #20242d; font-size: 25px; font-weight: 650; }
+.report-input-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.report-input-panel { min-width: 0; border: 1px solid #dce8f8; border-radius: 9px; overflow: hidden; box-shadow: 0 5px 13px rgba(35, 70, 113, .09); }
+.report-input-panel h2 { display: flex; align-items: center; gap: 12px; height: 62px; margin: 0; padding: 0 24px; background: linear-gradient(100deg, #eaf4ff, #f9fbff); color: #20242d; font-size: 20px; font-weight: 600; }
+.report-input-panel h2 svg { color: #3797eb; }
+.report-panel-body { display: flex; align-items: center; gap: 16px; min-height: 116px; padding: 20px 24px; }
+.report-input-icon { display: grid; place-items: center; width: 58px; height: 58px; flex: none; border-radius: 6px; background: #eaf3ff; color: #348cdb; }
+.report-template-control { min-width: 0; flex: 1; }
+.report-template-control .ant-select { width: 100%; max-width: 420px; }
+.report-template-control .ant-select-selector { min-height: 40px !important; }
+.report-template-control p { margin: 8px 0 0; color: #667487; font-size: 13px; }
+.report-upload-body { justify-content: space-between; gap: 20px; }
+.report-upload.ant-upload-wrapper { min-width: 0; flex: 1; }
+.report-upload .ant-upload.ant-upload-drag { min-height: 72px; border: 0; background: transparent; text-align: left; }
+.report-upload .ant-upload-btn { display: flex !important; align-items: center; gap: 13px; padding: 5px 0 !important; }
+.report-upload .ant-upload-btn svg { flex: none; color: #3d94df; }
+.report-upload .ant-upload-btn span { display: block; color: #3c4856; font-size: 16px; }
+.report-upload .ant-upload-btn small { display: block; color: #7b8795; font-size: 12px; }
+.report-upload .ant-upload-list { margin-top: 1px; }
+.report-generate-button.ant-btn { min-width: 126px; height: 43px; flex: none; font-size: 16px; }
+.report-preview-section { margin-top: 30px; padding: 24px 26px 22px; border-radius: 9px; background: #fff; box-shadow: 0 2px 13px rgba(34, 57, 95, .11); }
+.report-preview-heading { display: flex; align-items: center; gap: 15px; margin-bottom: 18px; }
+.report-preview-heading h2 { margin: 0; color: #20242d; font-size: 22px; font-weight: 600; }
+.report-generated-tag { padding: 4px 9px; border: 1px solid #d1e4fc; border-radius: 4px; background: #f0f7ff; color: #3b7ab5; font-size: 12px; }
+.report-preview-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; min-height: 490px; }
+.report-preview-canvas { position: relative; min-width: 0; height: min(66vh, 650px); min-height: 480px; overflow: auto; padding: 24px; background: #fff; }
+.report-preview-status { position: absolute; z-index: 2; inset: 0; display: grid; place-items: center; background: rgba(240, 243, 248, .75); }
+.report-document { min-height: 100%; }
+.report-document > section.docx { margin: 0 auto 22px !important; border: 0 !important; box-shadow: none !important; }
+.report-details { min-width: 0; padding: 20px; border: 1px solid #e2e8f0; border-radius: 6px; }
+.report-details h3 { margin: 0 0 24px; padding-bottom: 15px; border-bottom: 1px solid #edf0f4; font-size: 18px; font-weight: 600; }
+.report-details label { display: block; margin-bottom: 8px; font-size: 15px; }
+.report-field-hint { margin: 7px 0 21px; color: #7e8998; font-size: 12px; }
+.report-details dl { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 14px 8px; margin: 0 0 24px; font-size: 14px; }
+.report-details dt { color: #7b8794; }
+.report-details dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.report-details .ant-alert { font-size: 12px; }
+.report-preview-actions { display: flex; justify-content: flex-end; gap: 15px; padding-top: 20px; }
+.report-preview-actions .ant-btn { height: 43px; font-size: 16px; }
+.report-empty-preview { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 470px; border: 1px dashed #d8e2ed; border-radius: 6px; background: #f6f8fb; color: #8b9aab; text-align: center; }
+.report-empty-preview strong { color: #536477; font-size: 17px; }
+.report-empty-preview span { max-width: 90%; font-size: 14px; }
+.report-publish-note { margin: 0 0 16px; color: #596a7c; font-size: 14px; }
+@media (max-width: 1100px) { .report-input-grid { grid-template-columns: 1fr; } .report-preview-layout { grid-template-columns: 1fr; } .report-details { order: -1; } .report-preview-canvas { height: 600px; } }
+@media (max-width: 600px) { .report-card { padding: 18px 14px; } .report-input-panel h2 { padding: 0 16px; } .report-panel-body { padding: 17px 16px; } .report-upload-body { align-items: stretch; flex-direction: column; } .report-generate-button.ant-btn { width: 100%; } .report-preview-section { padding: 18px 14px; } .report-preview-canvas { min-height: 400px; height: 520px; padding: 12px; } .report-preview-actions .ant-btn { flex: 1; } }
 @media (max-width: 900px) { .ledger-filters { align-items: stretch; } .ledger-filter-actions { margin-left: 0; } }
 @media (max-width: 600px) { .ledger-body { padding: 20px 12px; } .ledger-filter-field { width: 100%; } .ledger-filter-actions { width: 100%; } .ledger-filter-actions .ant-btn { flex: 1; } .ledger-toolbar { flex-wrap: wrap; } .ledger-form-grid { grid-template-columns: 1fr; } .ledger-modal .ant-modal-content { padding: 22px; } }
 @media (max-width: 900px) { .app-content { padding: 18px 16px 28px; } .page-card { padding: 22px 18px; } .page-card.ledger-card { padding: 0 0 22px; } .page-toolbar { align-items: stretch; flex-direction: column; } .toolbar-actions { justify-content: space-between; } }

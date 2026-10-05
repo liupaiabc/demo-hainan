@@ -1,0 +1,9 @@
+{
+    "tabName": "个人信息保护影响评估（产品经理）",
+    "targetColumn": "K",
+    "targetColumnValue": "符合",
+    "reference": "G",
+    "condition": "!==",
+    "replacePoint": "```{风险处置方案}```",
+    "deepseekPrompt": "该种情况不满足，请给出可落地的建议，只含有一个自然段，并且适合放在评估报告中，字数200字左右。"
+}

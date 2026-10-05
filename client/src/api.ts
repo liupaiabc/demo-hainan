@@ -60,6 +60,14 @@ export const api = {
     if (!response.ok) throw new Error(await errorMessage(response));
     return response.blob();
   },
+  generateReport: async (templateId: number, evaluationForm: File) => {
+    const form = new FormData();
+    form.append('templateId', String(templateId));
+    form.append('evaluationForm', evaluationForm);
+    const response = await fetch('/api/reports/generate', { method: 'POST', body: form });
+    if (!response.ok) throw new Error(await errorMessage(response));
+    return response.blob();
+  },
   listLedger: () => request<LedgerRecord[]>('/api/ledger'),
   getLedger: (id: number) => request<LedgerRecord>(`/api/ledger/${id}`),
   createLedger: (fields: LedgerFields, files: Partial<Record<LedgerDocumentKey, File | null>>) =>

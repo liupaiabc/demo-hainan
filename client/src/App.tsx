@@ -2,6 +2,7 @@ import { Layout } from 'antd';
 import { NavLink, Outlet, Route, Routes } from 'react-router';
 import TemplatePage from './pages/TemplatePage';
 import LedgerPage from './pages/LedgerPage';
+import ReportPage from './pages/ReportPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { Icon } from './components/Icon';
 
@@ -54,7 +55,7 @@ export default function App() {
       <Route path="/" element={<AppLayout />}>
         <Route index element={<ComingSoonPage title="首页仪表盘" />} />
         <Route path="templates" element={<TemplatePage />} />
-        <Route path="reports" element={<ComingSoonPage title="报告生成" />} />
+        <Route path="reports" element={<ReportPage />} />
         <Route path="ledger" element={<LedgerPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

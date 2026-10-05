@@ -11,10 +11,11 @@ type LedgerFileNameKey = 'evaluationFormFileName' | 'evaluationReportFileName' |
 
 const emptyFilters: Filters = { businessName: '', requirementName: '', riskLevel: '', riskResolved: '' };
 type DocumentExtension = '.docx' | '.xlsx';
-const documentFields: { key: LedgerDocumentKey; label: string; extension: DocumentExtension; fileNameKey: LedgerFileNameKey }[] = [
-  { key: 'evaluationForm', label: '评估表', extension: '.xlsx', fileNameKey: 'evaluationFormFileName' },
-  { key: 'evaluationReport', label: '评估报告', extension: '.docx', fileNameKey: 'evaluationReportFileName' },
-  { key: 'riskTrackingSheet', label: '风险跟踪表', extension: '.xlsx', fileNameKey: 'riskTrackingSheetFileName' },
+type AcceptedExtension = DocumentExtension | '.xlsm';
+const documentFields: { key: LedgerDocumentKey; label: string; extensions: AcceptedExtension[]; fileNameKey: LedgerFileNameKey }[] = [
+  { key: 'evaluationForm', label: '评估表', extensions: ['.xlsx', '.xlsm'], fileNameKey: 'evaluationFormFileName' },
+  { key: 'evaluationReport', label: '评估报告', extensions: ['.docx'], fileNameKey: 'evaluationReportFileName' },
+  { key: 'riskTrackingSheet', label: '风险跟踪表', extensions: ['.xlsx'], fileNameKey: 'riskTrackingSheetFileName' },
 ];
 const riskLevels = ['高', '中', '低'];
 const resolvedOptions = ['是', '否', '无风险项'];
@@ -151,9 +152,9 @@ export default function LedgerPage() {
     }
   }
 
-  async function replaceDocument(record: LedgerRecord, key: LedgerDocumentKey, file: File, extension: DocumentExtension) {
-    if (!file.name.toLowerCase().endsWith(extension) || file.size === 0 || file.size > MAX_FILE_SIZE) {
-      message.error(`仅支持 10 MB 以内的非空 ${extension} 文件`);
+  async function replaceDocument(record: LedgerRecord, key: LedgerDocumentKey, file: File, extensions: AcceptedExtension[]) {
+    if (!extensions.some((extension) => file.name.toLowerCase().endsWith(extension)) || file.size === 0 || file.size > MAX_FILE_SIZE) {
+      message.error(`仅支持 10 MB 以内的非空 ${extensions.join(' 或 ')} 文件`);
       return;
     }
     try {
@@ -165,14 +166,14 @@ export default function LedgerPage() {
     }
   }
 
-  function fileCell(record: LedgerRecord, key: LedgerDocumentKey, label: string, extension: DocumentExtension, fileNameKey: LedgerFileNameKey) {
+  function fileCell(record: LedgerRecord, key: LedgerDocumentKey, label: string, extensions: AcceptedExtension[], fileNameKey: LedgerFileNameKey) {
     const fileName = record[fileNameKey];
     return <div className="ledger-file-cell">
       {fileName && <span className="ledger-file-name" title={fileName}>{fileName}</span>}
       <div className="ledger-icon-actions">
         <button type="button" disabled={!fileName} title={`下载${label}`} aria-label={`下载${label}`} onClick={() => { if (fileName) void downloadDocument(record, key, fileName); }}><Icon name="download" size={18} /></button>
-        <Upload accept={extension} showUploadList={false} beforeUpload={(selected) => {
-          void replaceDocument(record, key, selected, extension);
+        <Upload accept={extensions.join(',')} showUploadList={false} beforeUpload={(selected) => {
+          void replaceDocument(record, key, selected, extensions);
           return Upload.LIST_IGNORE;
         }}>
           <button type="button" title={`上传或替换${label}`} aria-label={`上传或替换${label}`}><Icon name="replace" size={18} /></button>
@@ -190,7 +191,7 @@ export default function LedgerPage() {
     { title: '风险等级', dataIndex: 'riskLevel', key: 'riskLevel', width: 110, align: 'center' },
     { title: '风险项个数', dataIndex: 'riskCount', key: 'riskCount', width: 120, align: 'center' },
     { title: '风险是否处置完成', dataIndex: 'riskResolved', key: 'riskResolved', width: 170, align: 'center' },
-    ...documentFields.map(({ key, label, extension, fileNameKey }) => ({ title: label, key, width: 140, align: 'center' as const, render: (_: unknown, record: LedgerRecord) => fileCell(record, key, label, extension, fileNameKey) })),
+    ...documentFields.map(({ key, label, extensions, fileNameKey }) => ({ title: label, key, width: 140, align: 'center' as const, render: (_: unknown, record: LedgerRecord) => fileCell(record, key, label, extensions, fileNameKey) })),
     {
       title: '操作', key: 'actions', width: 150, align: 'center',
       render: (_, record) => <div className="table-actions ledger-row-actions">
@@ -303,7 +304,7 @@ export default function LedgerPage() {
             <Form.Item className="full-width" label="风险是否处置完成" name="riskResolved" rules={[{ required: true, message: '请选择处置状态' }]}>
               <Select placeholder="请选择" options={resolvedOptions.map((value) => ({ value, label: value }))} />
             </Form.Item>
-            {documentFields.map(({ key, label, extension, fileNameKey }) => <Form.Item
+            {documentFields.map(({ key, label, extensions, fileNameKey }) => <Form.Item
               key={key}
               className="full-width ledger-upload-field"
               label={label}
@@ -313,17 +314,17 @@ export default function LedgerPage() {
               extra={editingRecord?.[fileNameKey] ? `当前文件：${editingRecord[fileNameKey]}（不选择则保留）` : undefined}
             >
               <Upload
-                accept={extension}
+                accept={extensions.join(',')}
                 maxCount={1}
                 beforeUpload={(file) => {
-                  if (!file.name.toLowerCase().endsWith(extension) || file.size === 0 || file.size > MAX_FILE_SIZE) {
-                    message.error(`仅支持 10 MB 以内的非空 ${extension} 文件`);
+                  if (!extensions.some((extension) => file.name.toLowerCase().endsWith(extension)) || file.size === 0 || file.size > MAX_FILE_SIZE) {
+                    message.error(`仅支持 10 MB 以内的非空 ${extensions.join(' 或 ')} 文件`);
                     return Upload.LIST_IGNORE;
                   }
                   return false;
                 }}
               >
-                <Button icon={<Icon name="upload" size={16} />}>选择 {extension} 文件</Button>
+                <Button icon={<Icon name="upload" size={16} />}>选择 {extensions.join(' 或 ')} 文件</Button>
               </Upload>
             </Form.Item>)}
           </div>

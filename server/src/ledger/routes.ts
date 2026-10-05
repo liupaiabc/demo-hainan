@@ -57,15 +57,15 @@ function formFields(body: unknown): LedgerFields {
 }
 
 function checkedFile(file: UploadedFile | undefined, key: LedgerDocumentKey, required: boolean): LedgerFile | undefined {
+  const extensions = documentTypes[key].extensions;
   if (!file) {
-    if (required) badRequest(`请选择 ${documentTypes[key].extension} 文件`);
+    if (required) badRequest(`请选择 ${extensions.join(' 或 ')} 文件`);
     return undefined;
   }
-  const extension = documentTypes[key].extension;
   const decodedName = Buffer.from(file.originalname, 'latin1').toString('utf8');
   const name = decodedName.includes('\uFFFD') ? file.originalname : decodedName;
-  if (!name.toLowerCase().endsWith(extension) || file.size === 0 || name.length > 255) {
-    badRequest(`附件仅支持非空的 ${extension} 文件，文件名不能超过 255 个字符`);
+  if (!extensions.some((extension) => name.toLowerCase().endsWith(extension)) || file.size === 0 || name.length > 255) {
+    badRequest(`附件仅支持非空的 ${extensions.join(' 或 ')} 文件，文件名不能超过 255 个字符`);
   }
   return { name, blob: file.buffer };
 }
@@ -115,10 +115,12 @@ ledgerRouter.get('/:id/files/:key/download', async (ctx) => {
     ctx.throw(404, '附件不存在');
     return;
   }
-  ctx.set('Content-Disposition', `attachment; filename="ledger-${id}-${key}${documentTypes[key].extension}"; filename*=UTF-8''${encodeURIComponent(file.name)}`);
+  const extension = documentTypes[key].extensions.find((item) => file.name.toLowerCase().endsWith(item)) ?? documentTypes[key].extensions[0];
+  ctx.set('Content-Disposition', `attachment; filename="ledger-${id}-${key}${extension}"; filename*=UTF-8''${encodeURIComponent(file.name)}`);
   ctx.set('Content-Length', String(file.blob.length));
   ctx.set('X-Content-Type-Options', 'nosniff');
-  ctx.type = documentTypes[key].mime;
+  ctx.type = key === 'evaluationForm' && extension === '.xlsm'
+    ? 'application/vnd.ms-excel.sheet.macroEnabled.12' : documentTypes[key].mime;
   ctx.body = file.blob;
 });
 

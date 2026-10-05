@@ -8,15 +8,15 @@ export type LedgerFiles = Partial<Record<LedgerDocumentKey, LedgerFile>>;
 export const documentTypes = {
   evaluationForm: {
     filenameColumn: 'evaluation_form_filename', blobColumn: 'evaluation_form_blob',
-    extension: '.xlsx', mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    extensions: ['.xlsx', '.xlsm'], mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   },
   evaluationReport: {
     filenameColumn: 'evaluation_report_filename', blobColumn: 'evaluation_report_blob',
-    extension: '.docx', mime: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    extensions: ['.docx'], mime: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   },
   riskTrackingSheet: {
     filenameColumn: 'risk_tracking_sheet_filename', blobColumn: 'risk_tracking_sheet_blob',
-    extension: '.xlsx', mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    extensions: ['.xlsx'], mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   },
 } as const;
 

@@ -54,11 +54,15 @@ npm run dev
 | `/` | 首页仪表盘 | 占位页 |
 | `/templates` | 报告模板管理 | 已接入 API 和 MySQL |
 | `/ledger` | 评估台账 | 已接入 API 和 MySQL |
-| `/reports` | 报告生成 | 占位页 |
+| `/reports` | 报告生成 | 已接入模板选择、评估表上传、临时生成、预览和发布 |
 
 报告模板管理支持列表、按名称搜索、上传、编辑、下载和删除。上传文件必须是非空的 `.docx`，最大 10 MB。数据由 API 和 MySQL 提供，刷新页面后仍会保留。
 
-评估台账可以按业务名称、需求名称、风险等级和风险是否处置完成在已加载列表中查询；处置状态可选“是”“否”“无风险项”。页面支持手动新增、编辑或删除记录。新增和编辑弹窗可填写所有文本字段，并上传评估表（仅 `.xlsx`）、评估报告（仅 `.docx`）和风险跟踪表（仅 `.xlsx`）。每个文件须非空且不超过 10 MB。表格提供对应文件的下载和上传/替换入口。记录与附件保存在 MySQL，刷新页面后仍会保留。导出台账按钮暂为界面占位。
+评估台账可以按业务名称、需求名称、风险等级和风险是否处置完成在已加载列表中查询；处置状态可选“是”“否”“无风险项”。页面支持手动新增、编辑或删除记录。新增和编辑弹窗可填写所有文本字段，并上传评估表（`.xlsx` 或 `.xlsm`）、评估报告（仅 `.docx`）和风险跟踪表（仅 `.xlsx`）。每个文件须非空且不超过 10 MB。表格提供对应文件的下载和上传/替换入口。记录与附件保存在 MySQL，刷新页面后仍会保留。导出台账按钮暂为界面占位。
+
+报告生成页从 `template` 表加载已上传的模板，手动选择一个模板并上传非空的 `.xlsx` 或 `.xlsm` 评估表后，调用 `POST /api/reports/generate`。服务端读取数据库中的模板 DOCX 和上传的评估表，按模板中的 `{工作表名/单元格地址}` 或反引号标记填充单元格值，并返回新的 DOCX。页面使用浏览器内的 DOCX 渲染器提供预览，下载得到同一份 DOCX；预览样式可能与 Word 有差异。点击发布报告后，弹窗要求填写台账的八个文本字段，成功后将上传的评估表和生成的 DOCX 分别保存到 `assessment_ledger` 的评估表、评估报告附件列，并跳转到评估台账。生成结果在发布前仅保存在当前页面内，刷新页面需重新生成。
+
+生成逻辑位于 `server/src/reports/`，参照 `server/template/` 的命令行示例实现，示例目录本身不参与 API 运行。服务端使用 SheetJS 0.20.3 解析 Excel，依赖来自其官方 CDN。`server/.env` 中的 `REPORT_AI_*` 项对应示例的 `ai-xlsm-config.json`：匹配指定工作表中不符合条件的行时，会调用 DeepSeek 并填入配置的风险处置标记。`DEEPSEEK_API_KEY` 只放在已忽略的 `server/.env`；不配置 `REPORT_AI_*` 时仅填充单元格标记。每次请求在已忽略的 `server/logs/` 下创建带时间戳的 JSONL 日志，记录步骤、数量和错误，不记录评估表全文、提示词、模型回复或密钥。生成的 DOCX 限制为 10 MB，以便后续发布到台账。DeepSeek 的实际请求尚未联调。
 
 | 请求 | 功能 |
 | --- | --- |
@@ -68,6 +72,7 @@ npm run dev
 | `PUT /api/templates/:id` | 修改名称和版本；可选传入新 `file` 替换附件 |
 | `GET /api/templates/:id/download` | 下载 `.docx` 文件 |
 | `DELETE /api/templates/:id` | 删除模板 |
+| `POST /api/reports/generate` | 生成报告；`multipart/form-data` 字段为 `templateId` 和 `evaluationForm`（`.xlsx` 或 `.xlsm`），返回填充后的 DOCX 文件 |
 
 台账 API 的记录 JSON 包含八个文本字段、三个附件文件名、`id` 和创建/修改信息，不包含附件内容。新增和整条修改使用 `multipart/form-data`，文本字段名依次为 `businessName`、`requirementName`、`description`、`contact`、`completionDate`、`riskLevel`、`riskCount`、`riskResolved`；可选文件字段为 `evaluationForm`、`evaluationReport`、`riskTrackingSheet`。整条修改时不上传某个附件会保留原文件。
 
