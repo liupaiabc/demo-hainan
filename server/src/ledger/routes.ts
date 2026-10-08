@@ -6,6 +6,7 @@ import {
   replaceLedgerFile, updateLedger,
 } from './repository.js';
 import type { LedgerFile, LedgerFiles } from './repository.js';
+import { buildLedgerExport } from './export.js';
 
 export const ledgerRouter = new Router({ prefix: '/api/ledger' });
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -70,17 +71,35 @@ function checkedFile(file: UploadedFile | undefined, key: LedgerDocumentKey, req
   return { name, blob: file.buffer };
 }
 
-function recordFiles(raw: unknown): LedgerFiles {
+function recordFiles(raw: unknown, required = false): LedgerFiles {
   const uploaded = raw as Record<LedgerDocumentKey, UploadedFile[] | undefined> | undefined;
   return {
-    evaluationForm: checkedFile(uploaded?.evaluationForm?.[0], 'evaluationForm', false),
-    evaluationReport: checkedFile(uploaded?.evaluationReport?.[0], 'evaluationReport', false),
+    evaluationForm: checkedFile(uploaded?.evaluationForm?.[0], 'evaluationForm', required),
+    evaluationReport: checkedFile(uploaded?.evaluationReport?.[0], 'evaluationReport', required),
     riskTrackingSheet: checkedFile(uploaded?.riskTrackingSheet?.[0], 'riskTrackingSheet', false),
   };
 }
 
 ledgerRouter.get('/', async (ctx) => {
   ctx.body = await listLedger();
+});
+
+ledgerRouter.get('/export', async (ctx) => {
+  const filterKeys = ['businessName', 'requirementName', 'riskLevel', 'riskResolved'] as const;
+  const filters = filterKeys.map((key) => {
+    const value = ctx.query[key];
+    if (value !== undefined && typeof value !== 'string') badRequest('无效的筛选条件');
+    return [key, value] as const;
+  });
+  const records = (await listLedger()).filter((record) =>
+    filters.every(([key, value]) => !value || record[key] === value),
+  );
+  const file = buildLedgerExport(records);
+  ctx.type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  ctx.set('Content-Disposition', `attachment; filename="assessment-ledger.xlsx"; filename*=UTF-8''${encodeURIComponent('评估台账.xlsx')}`);
+  ctx.set('Content-Length', String(file.length));
+  ctx.set('Cache-Control', 'no-store');
+  ctx.body = file;
 });
 
 ledgerRouter.get('/:id', async (ctx) => {
@@ -90,7 +109,7 @@ ledgerRouter.get('/:id', async (ctx) => {
 });
 
 ledgerRouter.post('/', recordUpload, async (ctx) => {
-  const record = await createLedger(formFields(ctx.request.body), recordFiles(ctx.files));
+  const record = await createLedger(formFields(ctx.request.body), recordFiles(ctx.files, true));
   ctx.status = 201;
   ctx.set('Location', `/api/ledger/${record.id}`);
   ctx.body = record;
@@ -119,7 +138,7 @@ ledgerRouter.get('/:id/files/:key/download', async (ctx) => {
   ctx.set('Content-Disposition', `attachment; filename="ledger-${id}-${key}${extension}"; filename*=UTF-8''${encodeURIComponent(file.name)}`);
   ctx.set('Content-Length', String(file.blob.length));
   ctx.set('X-Content-Type-Options', 'nosniff');
-  ctx.type = key === 'evaluationForm' && extension === '.xlsm'
+  ctx.type = extension === '.xlsm'
     ? 'application/vnd.ms-excel.sheet.macroEnabled.12' : documentTypes[key].mime;
   ctx.body = file.blob;
 });

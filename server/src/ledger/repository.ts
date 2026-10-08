@@ -16,7 +16,7 @@ export const documentTypes = {
   },
   riskTrackingSheet: {
     filenameColumn: 'risk_tracking_sheet_filename', blobColumn: 'risk_tracking_sheet_blob',
-    extensions: ['.xlsx'], mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    extensions: ['.xlsx', '.xlsm'], mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   },
 } as const;
 

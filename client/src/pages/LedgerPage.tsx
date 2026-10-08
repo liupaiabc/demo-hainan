@@ -15,7 +15,7 @@ type AcceptedExtension = DocumentExtension | '.xlsm';
 const documentFields: { key: LedgerDocumentKey; label: string; extensions: AcceptedExtension[]; fileNameKey: LedgerFileNameKey }[] = [
   { key: 'evaluationForm', label: '评估表', extensions: ['.xlsx', '.xlsm'], fileNameKey: 'evaluationFormFileName' },
   { key: 'evaluationReport', label: '评估报告', extensions: ['.docx'], fileNameKey: 'evaluationReportFileName' },
-  { key: 'riskTrackingSheet', label: '风险跟踪表', extensions: ['.xlsx'], fileNameKey: 'riskTrackingSheetFileName' },
+  { key: 'riskTrackingSheet', label: '风险跟踪表', extensions: ['.xlsx', '.xlsm'], fileNameKey: 'riskTrackingSheetFileName' },
 ];
 const riskLevels = ['高', '中', '低'];
 const resolvedOptions = ['是', '否', '无风险项'];
@@ -152,6 +152,20 @@ export default function LedgerPage() {
     }
   }
 
+  async function exportLedger() {
+    try {
+      const blob = await api.exportLedger(appliedFilters);
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `评估台账-${new Date().toISOString().slice(0, 10)}.xlsx`;
+      anchor.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      message.error(errorText(error));
+    }
+  }
+
   async function replaceDocument(record: LedgerRecord, key: LedgerDocumentKey, file: File, extensions: AcceptedExtension[]) {
     if (!extensions.some((extension) => file.name.toLowerCase().endsWith(extension)) || file.size === 0 || file.size > MAX_FILE_SIZE) {
       message.error(`仅支持 10 MB 以内的非空 ${extensions.join(' 或 ')} 文件`);
@@ -231,7 +245,6 @@ export default function LedgerPage() {
 
   return (
     <div className="page-wrap">
-      <div className="breadcrumb">首页 <span>/</span> 评估台账</div>
       <section className="page-card ledger-card">
         <h1 className="ledger-title">评估台账</h1>
         <div className="ledger-body">
@@ -248,7 +261,7 @@ export default function LedgerPage() {
           </div>
           <div className="ledger-toolbar">
             <Button type="primary" icon={<Icon name="plus" size={18} />} onClick={openCreate}>手动新增记录</Button>
-            <Button icon={<Icon name="export" size={18} />} onClick={() => message.info('导出功能尚未实现')}>导出台账 Excel</Button>
+            <Button icon={<Icon name="export" size={18} />} onClick={() => void exportLedger()}>导出评估台账</Button>
           </div>
           <Table<LedgerRecord>
             className="ledger-table"
@@ -278,7 +291,7 @@ export default function LedgerPage() {
         className="ledger-modal"
         destroyOnHidden
       >
-        <Form form={form} layout="vertical" requiredMark={false} className="ledger-form">
+        <Form form={form} layout="vertical" className="ledger-form">
           <div className="ledger-form-grid">
             <Form.Item label="业务名称" name="businessName" rules={[{ required: true, whitespace: true, message: '请输入业务名称' }]}>
               <Input placeholder="请输入业务名称" maxLength={100} />
@@ -309,6 +322,10 @@ export default function LedgerPage() {
               className="full-width ledger-upload-field"
               label={label}
               name={key}
+              required={editingId === null && key !== 'riskTrackingSheet'}
+              rules={editingId === null && key !== 'riskTrackingSheet'
+                ? [{ type: 'array', required: true, min: 1, message: `请选择${label}` }]
+                : undefined}
               valuePropName="fileList"
               getValueFromEvent={(event: { fileList: UploadFile[] }) => event.fileList}
               extra={editingRecord?.[fileNameKey] ? `当前文件：${editingRecord[fileNameKey]}（不选择则保留）` : undefined}

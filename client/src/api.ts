@@ -70,6 +70,12 @@ export const api = {
     return response.blob();
   },
   listLedger: () => request<LedgerRecord[]>('/api/ledger'),
+  exportLedger: async (filters: Pick<LedgerFields, 'businessName' | 'requirementName' | 'riskLevel' | 'riskResolved'>) => {
+    const query = new URLSearchParams(Object.entries(filters).filter(([, value]) => value));
+    const response = await fetch(`/api/ledger/export?${query}`);
+    if (!response.ok) throw new Error(await errorMessage(response));
+    return response.blob();
+  },
   getLedger: (id: number) => request<LedgerRecord>(`/api/ledger/${id}`),
   createLedger: (fields: LedgerFields, files: Partial<Record<LedgerDocumentKey, File | null>>) =>
     request<LedgerRecord>('/api/ledger', { method: 'POST', body: ledgerForm(fields, files) }),

@@ -151,7 +151,6 @@ export default function TemplatePage() {
 
   return (
     <div className="page-wrap">
-      <div className="breadcrumb">首页 <span>/</span> 报告模板管理</div>
       <section className="page-card">
         <div className="page-toolbar">
           <h1>报告模板管理</h1>

@@ -7,7 +7,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import DashboardPage from './pages/DashboardPage';
 import { Icon } from './components/Icon';
 
-const { Sider, Header, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const navigation = [
   { to: '/', label: '首页仪表盘', icon: 'dashboard' },
@@ -20,7 +20,7 @@ function AppLayout() {
   return (
     <Layout className="app-shell">
       <Sider className="app-sidebar" width={250} breakpoint="lg" collapsedWidth="0">
-        <div className="sidebar-brand">PIA评估平台</div>
+        <div className="sidebar-brand"><span>个人信息保护影响</span><span>评估平台</span></div>
         <nav className="sidebar-nav" aria-label="主导航">
           {navigation.map(({ to, label, icon }) => (
             <NavLink key={to} to={to} end className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}>
@@ -31,7 +31,6 @@ function AppLayout() {
         </nav>
       </Sider>
       <Layout className="main-layout">
-        <Header className="app-header">PIA评估平台</Header>
         <Content className="app-content"><Outlet /></Content>
       </Layout>
     </Layout>

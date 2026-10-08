@@ -161,7 +161,6 @@ export default function ReportPage() {
 
   return (
     <div className="page-wrap">
-      <div className="breadcrumb">首页 <span>/</span> 报告生成</div>
       <section className="page-card report-card">
         <h1 className="report-title">报告生成</h1>
         {templateError && <Alert className="load-error" type="error" showIcon message={`模板加载失败：${templateError}`} action={<Button size="small" onClick={() => { setLoadingTemplates(true); setReloadKey((key) => key + 1); }}>重试</Button>} />}

@@ -9,30 +9,32 @@ import { Icon } from '../components/Icon';
 
 const barColors = ['#1677d9', '#55a7ed', '#82c2f3', '#a8d2f4'];
 
-function barOption(businesses: DashboardResponse['businessBreakdown'], compact = false): EChartsCoreOption {
+function barOption(businesses: DashboardResponse['businessBreakdown']): EChartsCoreOption {
+  const maxCount = Math.max(0, ...businesses.map((item) => item.count));
   return {
     animationDuration: 450,
     color: barColors,
-    grid: { top: 12, right: 12, bottom: compact ? 34 : 48, left: 42, containLabel: false },
+    grid: { top: 12, right: 12, bottom: 34, left: 42, containLabel: false },
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, formatter: (params: any) => {
       const item = params[0];
-      return `${item.axisValue}<br/>评估数量：${item.value}`;
+      return `${item.axisValue}<br/>完成评估数量：${item.value}`;
     } },
     xAxis: {
       type: 'category', data: businesses.map((item) => item.businessName),
       axisTick: { show: false }, axisLine: { lineStyle: { color: '#dce5f0' } },
-      axisLabel: { color: '#566174', fontSize: compact ? 12 : 14, interval: 0, width: compact ? 72 : 90, overflow: 'truncate' },
+      axisLabel: { color: '#566174', fontSize: 12, interval: 0, width: 72, overflow: 'truncate' },
     },
     yAxis: {
-      type: 'value', minInterval: 1, axisLine: { show: false }, axisTick: { show: false },
+      type: 'value', max: Math.max(1, Math.ceil(maxCount * 1.25)), minInterval: 1,
+      axisLine: { show: false }, axisTick: { show: false },
       axisLabel: { color: '#8a95a4' }, splitLine: { lineStyle: { color: '#e8edf4', type: 'dashed' } },
     },
     series: [{
-      type: 'bar', barMaxWidth: compact ? 42 : 48,
+      type: 'bar', barMaxWidth: 42,
       data: businesses.map((item, index) => ({
         value: item.count, itemStyle: { color: barColors[index % barColors.length], borderRadius: [5, 5, 0, 0] },
       })),
-      label: { show: true, position: 'top', color: '#3a6c9f', fontSize: compact ? 12 : 14 },
+      label: { show: true, position: 'top', color: '#3a6c9f', fontSize: 12 },
     }],
   };
 }
@@ -72,38 +74,32 @@ export default function DashboardPage() {
   }, []);
 
   const topBusinesses = data?.businessBreakdown.slice(0, 4) ?? [];
-  const compactBars = useMemo(() => barOption(topBusinesses, true), [data]);
-  const allBars = useMemo(() => barOption(data?.businessBreakdown ?? []), [data]);
+  const compactBars = useMemo(() => barOption(topBusinesses), [data]);
   const risks = useMemo(() => riskOption(data?.riskStatus ?? []), [data]);
 
   return (
     <div className="page-wrap dashboard-page">
-      <div className="breadcrumb"><Icon name="dashboard" size={17} /> 首页 <span>/</span> 仪表盘</div>
       {error && <Alert className="load-error" type="error" showIcon message={error} action={<Button size="small" onClick={() => window.location.reload()}>重试</Button>} />}
       {loading ? <div className="dashboard-loading"><Skeleton active paragraph={{ rows: 12 }} /></div> : data && <>
         <div className="dashboard-top-grid">
           <section className="dashboard-panel dashboard-stat dashboard-total">
-            <h1>PIA评估总数量</h1>
+            <h1>已完成评估总数量</h1>
             <div className="dashboard-stat-body"><strong>{data.totalAssessments}</strong><div className="dashboard-orbit" aria-hidden="true" /></div>
             <p>已记录的评估台账数量</p>
           </section>
           <section className="dashboard-panel dashboard-top-chart">
-            <h2>各业务评估数量</h2>
-            {topBusinesses.length ? <DashboardChart className="dashboard-chart-small" option={compactBars} label="各业务评估数量柱状图" /> : <Empty description="暂无评估数据" />}
-          </section>
-          <section className="dashboard-panel dashboard-stat dashboard-risk">
-            <h2>风险未处置完成</h2>
-            <div className="dashboard-stat-body">
-              <div><strong>{data.unresolvedCount}</strong><p>条评估记录待处理</p></div>
-              {data.totalAssessments > 0 && <DashboardChart className="dashboard-chart-donut" option={risks} label="风险处置状态环形图" />}
-            </div>
+            <h2>各业务完成评估数量</h2>
+            {topBusinesses.length ? <DashboardChart className="dashboard-chart-small" option={compactBars} label="各业务完成评估数量柱状图" /> : <Empty description="暂无评估数据" />}
           </section>
         </div>
 
         <div className="dashboard-middle-grid">
-          <section className="dashboard-panel dashboard-business-panel">
-            <h2>各业务评估数量统计</h2>
-            {data.businessBreakdown.length ? <DashboardChart className="dashboard-chart-large" option={allBars} label="各业务评估数量统计柱状图" /> : <Empty description="暂无评估数据" />}
+          <section className="dashboard-panel dashboard-stat dashboard-risk">
+            <h2>风险未处置完成需求数量</h2>
+            <div className="dashboard-stat-body">
+              <div><strong>{data.unresolvedCount}</strong><p>条评估记录待处理</p></div>
+              {data.totalAssessments > 0 && <DashboardChart className="dashboard-chart-donut" option={risks} label="风险处置状态环形图" />}
+            </div>
           </section>
           <section className="dashboard-panel dashboard-list-panel">
             <div className="dashboard-panel-heading"><h2>风险未处置完成列表</h2><Link to="/ledger">查看全部</Link></div>
